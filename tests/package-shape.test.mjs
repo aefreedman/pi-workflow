@@ -20,6 +20,17 @@ test("package is prompt-only and publishes no development or runtime infrastruct
   assert.equal(existsSync(new URL("../evals/workflow-work-behavioral/run-eval.ts", import.meta.url)), true, "development evals remain repository-owned");
 });
 
+test("trusted publishing is tag-bound and token-free", () => {
+  const workflow = readFileSync(new URL("../.github/workflows/publish.yml", import.meta.url), "utf8");
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /github\.ref_type == 'tag'/);
+  assert.match(workflow, /id-token: write/);
+  assert.match(workflow, /npm install --global npm@11\.6\.2/);
+  assert.match(workflow, /npm publish/);
+  assert.match(workflow, /Published gitHead.*GITHUB_SHA/);
+  assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN|NPM_TOKEN|--otp|_authToken/i);
+});
+
 test("active package surfaces contain no retired composition or addressed-reference machinery", () => {
   const active = ["README.md", "prompts/plan.md", "prompts/work.md", "prompts/review.md", "prompts/changelog.md"]
     .map((file) => readFileSync(new URL(`../${file}`, import.meta.url), "utf8"))
