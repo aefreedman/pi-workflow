@@ -1,0 +1,49 @@
+{
+  "name": "@aefree/pi-workflow",
+  "version": "0.1.0",
+  "description": "Canonical prompt-owned Pi planning, implementation, review, and changelog workflows.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "pi-package",
+    "workflow",
+    "orchestration"
+  ],
+  "files": [
+    "prompts",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "pi": {
+    "prompts": [
+      "./prompts"
+    ]
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "eval:plan": "npx --yes tsx evals/workflow-plan-behavioral/run-eval.ts",
+    "eval:work": "npx --yes tsx evals/workflow-work-behavioral/run-eval.ts",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.83.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/aefreedman/pi-workflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aefreedman/pi-workflow/issues"
+  },
+  "homepage": "https://github.com/aefreedman/pi-workflow#readme"
+}

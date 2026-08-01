@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "default_artifact_creation",
+      "fixture": "starter",
+      "prompt": "/plan update src/importer.ts to retry only transient network failures, HTTP 429, and HTTP 5xx responses with bounded exponential backoff while preserving three total attempts",
+      "expectedChecks": ["plan_file_created", "source_read", "project_instructions_read", "no_source_changes", "bounded_trace"]
+    },
+    {
+      "id": "draft_only",
+      "fixture": "starter",
+      "prompt": "/plan draft-only update src/importer.ts to retry only transient network failures, HTTP 429, and HTTP 5xx responses with bounded exponential backoff while preserving three total attempts",
+      "expectedChecks": ["no_plan_file_created", "source_read", "project_instructions_read", "plan_semantic_draft", "no_source_changes", "bounded_trace"]
+    },
+    {
+      "id": "collision_refusal",
+      "fixture": "starter",
+      "prompt": "/plan improve the retry policy in src/importer.ts. The intended output is docs/plans/YYYY-MM-DD-plan-importer-retry-policy-plan.md and it already exists; refuse the collision.",
+      "prepare": "collision",
+      "stoppedNoAction": true,
+      "expectedChecks": ["collision_preserved", "no_new_plan_file", "no_source_changes", "bounded_trace"]
+    },
+    {
+      "id": "reference_independent",
+      "fixture": "starter",
+      "prompt": "/plan draft-only update src/importer.ts to retry only transient network failures, HTTP 429, and HTTP 5xx responses with bounded exponential backoff while preserving three total attempts",
+      "expectedChecks": ["no_plan_file_created", "source_read", "project_instructions_read", "plan_semantic_draft", "no_source_changes", "bounded_trace"]
+    }
+  ]
+}
