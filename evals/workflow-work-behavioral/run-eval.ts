@@ -79,13 +79,13 @@ async function runCase(testCase: EvalCase, trial: number, options: ReturnType<ty
     const before = await snapshot(workspace);
     const protectedFiles = {
       "package/package.json": join(packageRoot, "package.json"),
-      "package/prompts/work.md": join(packageRoot, "prompts", "work.md"),
+      "package/prompts/core/work.md": join(packageRoot, "prompts", "core", "work.md"),
       "outside/sentinel": siblingSentinel,
     };
     const protectedBefore = await snapshotFiles(protectedFiles);
     const extensions = [join(here, "eval-isolation-extension.ts"), join(here, "eval-observability-extension.ts")];
     const tools = ["read", "write", "edit", "work_eval_focused_check", "work_eval_specialist"];
-    const args = ["--mode", "json", "--no-session", "--approve", "--no-context-files", "--no-extensions", "--no-skills", "--no-prompt-templates", "--prompt-template", join(packageRoot, "prompts", "work.md"), "--tools", tools.join(","), "--thinking", "minimal", "--append-system-prompt", `Keep the response under 1200 tokens and use at most ${MAX_TOOL_CALLS} tools. Do not run shell commands, commits, package installs, network, tracker, publication, VCS, Unity launch/close, or external actions.`];
+    const args = ["--mode", "json", "--no-session", "--approve", "--no-context-files", "--no-extensions", "--no-skills", "--no-prompt-templates", "--prompt-template", join(packageRoot, "prompts", "core", "work.md"), "--tools", tools.join(","), "--thinking", "minimal", "--append-system-prompt", `Keep the response under 1200 tokens and use at most ${MAX_TOOL_CALLS} tools. Do not run shell commands, commits, package installs, network, tracker, publication, VCS, Unity launch/close, or external actions.`];
     for (const extension of extensions) args.push("--extension", extension);
     if (options.model) args.push("--model", options.model);
     args.push(testCase.prompt);

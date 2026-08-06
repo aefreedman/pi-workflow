@@ -5,7 +5,7 @@ import test from "node:test";
 const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
 test("package is prompt-only and publishes no development or runtime infrastructure", () => {
-  assert.deepEqual(manifest.pi, { prompts: ["./prompts"] });
+  assert.deepEqual(manifest.pi, { prompts: ["./prompts/core", "./prompts/special"] });
   assert.deepEqual(manifest.files, ["prompts", "CHANGELOG.md", "LICENSE", "README.md"]);
   assert.equal(manifest.sideEffects, false);
   assert.deepEqual(manifest.publishConfig, { access: "public" });
@@ -32,7 +32,7 @@ test("trusted publishing is tag-bound and token-free", () => {
 });
 
 test("active package surfaces contain no retired composition or addressed-reference machinery", () => {
-  const active = ["README.md", "prompts/plan.md", "prompts/work.md", "prompts/review.md", "prompts/changelog.md"]
+  const active = ["README.md", "prompts/core/plan.md", "prompts/core/work.md", "prompts/core/review.md", "prompts/core/changelog.md"]
     .map((file) => readFileSync(new URL(`../${file}`, import.meta.url), "utf8"))
     .join("\n");
   assert.doesNotMatch(active, /workflow_guidance|WorkflowGuidance|guidance[- ](?:service|contributor|registry|composition)|read_package_reference|review-depth\/guidance\.md/i);

@@ -162,7 +162,7 @@ async function runCase(testCase: EvalCase, trial: number, options: ReturnType<ty
   const tools = ["read", "write", "edit"];
   const args = [
     "--mode", "json", "--no-session", "--approve", "--no-context-files", "--no-extensions", "--no-skills", "--no-prompt-templates",
-    "--prompt-template", join(packageRoot, "prompts", "plan.md"),
+    "--prompt-template", join(packageRoot, "prompts", "core", "plan.md"),
     "--tools", tools.join(","), "--thinking", "minimal",
     "--append-system-prompt", `Evaluation boundary: only the fresh temporary workspace is writable. Host date for this isolated evaluation is ${hostDate}; use it for any YYYY-MM-DD plan filename. Keep the response concise (under 1200 tokens), use at most ${MAX_TOOL_CALLS} tools, and do not run shell commands, commits, package installs, or external-network actions.`,
   ];

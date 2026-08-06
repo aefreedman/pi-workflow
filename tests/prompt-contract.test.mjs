@@ -4,20 +4,27 @@ import test from "node:test";
 
 function read(path) { return readFileSync(new URL(`../${path}`, import.meta.url), "utf8"); }
 
-const prompts = Object.fromEntries(readdirSync(new URL("../prompts/", import.meta.url))
-  .filter((name) => name.endsWith(".md"))
-  .map((name) => [name, read(`prompts/${name}`)]));
+const promptDirectories = ["core", "special"];
+const prompts = Object.fromEntries(promptDirectories.flatMap((directory) =>
+  readdirSync(new URL(`../prompts/${directory}/`, import.meta.url))
+    .filter((name) => name.endsWith(".md"))
+    .map((name) => [name, read(`prompts/${directory}/${name}`)]),
+));
 const work = prompts["work.md"];
 const review = prompts["review.md"];
 const plan = prompts["plan.md"];
-const workflows = ["changelog.md", "plan.md", "review.md", "work.md"];
+const closeoutCard = prompts["closeout-card.md"];
+const continuePrompt = prompts["continue.md"];
+const workflows = ["changelog.md", "closeout-card.md", "continue.md", "plan.md", "review.md", "work.md"];
+const contractWorkflows = ["changelog.md", "plan.md", "review.md", "work.md"];
+const allPromptNames = [...workflows, "gpt-delegate-implement.md"].sort();
 
-test("canonical native prompt inventory remains stable", () => {
-  assert.deepEqual(Object.keys(prompts).sort(), workflows);
+test("canonical native prompt inventory remains stable across core and special directories", () => {
+  assert.deepEqual(Object.keys(prompts).sort(), allPromptNames);
 });
 
 test("canonical prompts preserve project discovery, target resolution, authority, and validation without composition", () => {
-  for (const file of workflows) {
+  for (const file of contractWorkflows) {
     const prompt = prompts[file];
     assert.match(prompt, /## Input and authority/);
     assert.doesNotMatch(prompt, /workflow_guidance|WorkflowGuidance|guidance[- ](?:service|contributor|registry|composition)|(?:evidence-backed\s+)?provider\s+composition|(?:guidance|supplemental)\s+composition|compos(?:e|es|ed|ing|ition)\s+(?:providers?|guidance|supplemental)|guidance ledger|contributor\/(?:resource|lifecycle)|contributor lifecycle|optional guidance|provider gaps?/i, file);
@@ -40,6 +47,14 @@ test("work and review own complete bounded depth contracts", () => {
     assert.match(prompt, /Agent availability alone is never a trigger/);
     assert.doesNotMatch(prompt, /read_package_reference|review-depth\/guidance\.md|inline fallback/i);
   }
+});
+
+test("moved closeout and continuation prompts preserve their contracts", () => {
+  assert.match(closeoutCard, /codecks_card_list_resolvables/);
+  assert.match(closeoutCard, /plastic_mergeToBranch/);
+  assert.match(closeoutCard, /Do not assume `\/dev`/);
+  assert.match(closeoutCard, /Do not call `codecks_card_update_status`/);
+  assert.match(continuePrompt, /resume or restart any subtasks/);
 });
 
 test("output and authority requirements remain semantic and explicit", () => {

@@ -1,6 +1,6 @@
 {
   "name": "@aefree/pi-workflow",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Canonical prompt-owned Pi planning, implementation, review, and changelog workflows.",
   "type": "module",
   "sideEffects": false,
@@ -21,7 +21,8 @@
   ],
   "pi": {
     "prompts": [
-      "./prompts"
+      "./prompts/core",
+      "./prompts/special"
     ]
   },
   "scripts": {
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.83.0",
     "@types/node": "^24.0.0",
+    "typebox": "1.3.7",
     "typescript": "^5.8.3"
   },
   "repository": {
