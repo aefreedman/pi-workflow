@@ -20,14 +20,17 @@ test("package is prompt-only and publishes no development or runtime infrastruct
   assert.equal(existsSync(new URL("../evals/workflow-work-behavioral/run-eval.ts", import.meta.url)), true, "development evals remain repository-owned");
 });
 
-test("trusted publishing is tag-bound and token-free", () => {
+test("trusted publishing is tag-bound, resumable, and token-free", () => {
   const workflow = readFileSync(new URL("../.github/workflows/publish.yml", import.meta.url), "utf8");
-  assert.match(workflow, /workflow_dispatch:/);
-  assert.match(workflow, /github\.ref_type == 'tag'/);
+  assert.match(workflow, /workflow_dispatch:\s*\n\s*inputs:\s*\n\s*tag:/);
+  assert.match(workflow, /ref: \$\{\{ env\.RELEASE_TAG \}\}/);
+  assert.match(workflow, /environment: npm/);
+  assert.match(workflow, /registry-url: https:\/\/registry\.npmjs\.org/);
   assert.match(workflow, /id-token: write/);
   assert.match(workflow, /npm install --global npm@11\.6\.2/);
+  assert.match(workflow, /publish_required=false/);
   assert.match(workflow, /npm publish/);
-  assert.match(workflow, /Published gitHead.*GITHUB_SHA/);
+  assert.match(workflow, /expected_git_head="\$\(git rev-parse HEAD\)"/);
   assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN|NPM_TOKEN|--otp|_authToken/i);
 });
 
