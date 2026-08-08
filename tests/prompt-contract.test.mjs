@@ -54,7 +54,7 @@ test("moved closeout and continuation prompts preserve their contracts", () => {
   assert.match(closeoutCard, /plastic_mergeToBranch/);
   assert.match(closeoutCard, /Do not assume `\/dev`/);
   assert.match(closeoutCard, /Do not call `codecks_card_update_status`/);
-  assert.match(continuePrompt, /resume or restart any subtasks/);
+  assert.match(continuePrompt, /Resume any tasks that were interrupted/);
 });
 
 test("output and authority requirements remain semantic and explicit", () => {

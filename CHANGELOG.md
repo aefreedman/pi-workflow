@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 - 2026-08-08
+
+### Changed
+
+- Simplified `/continue` while preserving interrupted-task resumption.
+- Relaxed the Pi development dependency constraint and hardened the resumable trusted-publishing workflow.
+
 ## 0.2.0 - 2026-08-06
 
 ### Added
