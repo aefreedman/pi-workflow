@@ -54,7 +54,32 @@ test("moved closeout and continuation prompts preserve their contracts", () => {
   assert.match(closeoutCard, /plastic_mergeToBranch/);
   assert.match(closeoutCard, /Do not assume `\/dev`/);
   assert.match(closeoutCard, /Do not call `codecks_card_update_status`/);
-  assert.match(continuePrompt, /Resume any tasks that were interrupted/);
+  assert.match(continuePrompt, /Before resuming, recover the authority record/);
+});
+
+test("authority records survive clarification, delegation, and resumption without implicit implementation", () => {
+  for (const prompt of [plan, work, continuePrompt, prompts["gpt-delegate-implement.md"]]) {
+    assert.match(prompt, /authority record/i);
+    assert.match(prompt, /authorized phase/);
+    assert.match(prompt, /user instruction/);
+    assert.match(prompt, /scope\/targets and non-goals/);
+    assert.match(prompt, /unresolved decisions/);
+    assert.match(prompt, /clarification/);
+    assert.match(prompt, /(?:child task|delegated task|child) packets?|delegat(?:ed|ion)/);
+    assert.match(prompt, /(?:resumption|interruption|next).*handoff/);
+    assert.match(prompt, /(?:explicit user instruction|explicit user transition)/);
+    assert.match(prompt, /(?:design-detail approval|design answer)/i);
+    assert.match(prompt, /continue/i);
+    assert.match(prompt, /source\/asset(?:s| writes)/);
+    assert.match(prompt, /mutating evals/);
+    assert.match(prompt, /missing or conflicting/i);
+  }
+  assert.match(plan, /conversation context, not permission to create or update another file/);
+  assert.match(work, /Parent answers to child questions cannot expand the user's authority/);
+  assert.match(continuePrompt, /uncertain effects/);
+  assert.match(continuePrompt, /do not infer that it never happened or redispatch it blindly/);
+  assert.match(prompts["gpt-delegate-implement.md"], /update that file only when separately authorized/);
+  // These assertions guard prompt distribution, not actual multi-turn agent behavior.
 });
 
 test("output and authority requirements remain semantic and explicit", () => {

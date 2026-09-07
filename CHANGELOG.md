@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Carry explicit phase, scope, restrictions, and pending decisions through planning, work, delegation, and resumption; design answers and continuation do not implicitly authorize implementation.
+
 ## 0.2.1 - 2026-08-08
 
 ### Changed

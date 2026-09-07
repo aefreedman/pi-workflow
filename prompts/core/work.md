@@ -10,6 +10,12 @@ Task or authoritative plan: $ARGUMENTS
 
 Accept a concrete scoped task or an authoritative plan, spec, or todo path. Ask one targeted question when scope, authority, required target, or requested action is materially ambiguous. Read the complete authority source before editing; classify it as authoritative/read-only, mutable implementation target, generated output, or evidence-only input. Its acceptance criteria and stop conditions control implementation. Never edit an authority source or plan checkbox merely to make output appear reconciled unless that edit is separately requested.
 
+## Authority continuity
+
+Before implementation, recover the authority record from the conversation or handoff: authorized phase and user instruction establishing it; exact scope/targets and non-goals; permitted writes and external-action restrictions; and unresolved decisions. Preserve it in clarification answers, child task packets, and interruption/resumption handoffs. This record is conversation context, not permission to edit an authority artifact. Missing or conflicting authority requires one targeted clarification before mutation.
+
+A planning discussion, design-detail approval, “continue,” or child recommendation is not an implementation transition. Require an explicit user instruction to implement the resolved scope (including a direct `/work` request), record the transition, and preserve all remaining restrictions. While still investigation-only, do not edit source/assets, save project state, check in, or dispatch mutating evals. Parent answers to child questions cannot expand the user's authority; carry the same phase and permitted actions back to the child. A child cannot authorize implementation or an external action for its parent.
+
 ## Implementation and validation contract
 
 Resolve authority, exact implementation/test targets, applicable instructions, existing changes, explicit VCS opt-outs, and actions outside `/work`'s local branch/commit authorization before editing. Read implementation and adjacent tests; identify acceptance criteria, public/package and ownership/lifecycle boundaries, inputs or persisted state, generated artifacts, and changes to preserve. Make the smallest coherent in-scope increment, preserve compatibility unless explicitly changed, inspect exact changed lines, and add focused deterministic coverage when practical without inventing broad refactors.
