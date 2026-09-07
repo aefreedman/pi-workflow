@@ -82,6 +82,34 @@ test("authority records survive clarification, delegation, and resumption withou
   // These assertions guard prompt distribution, not actual multi-turn agent behavior.
 });
 
+test("continuation reconciles exact known writers instead of blindly resuming or replacing work", () => {
+  assert.doesNotMatch(continuePrompt, /Resume any tasks that were interrupted/);
+  for (const prompt of [continuePrompt, work, prompts["gpt-delegate-implement.md"]]) {
+    for (const state of ["active", "detached", "paused", "terminal", "stale"]) assert(prompt.includes(state), state);
+    assert.match(prompt, /pending supervisor decisions/);
+    assert.match(prompt, /actual callable runtime/);
+    assert.match(prompt, /exact.run/);
+    assert.match(prompt, /owned checkout\/paths/);
+    assert.match(prompt, /reattach/);
+    assert.match(prompt, /native notifications|native completion\/attention notifications/);
+    assert.match(prompt, /return control/);
+    assert.match(prompt, /poll/);
+    assert.match(prompt, /authorized decision-maker/);
+    assert.match(prompt, /ownership release/);
+    assert.match(prompt, /explicit reassignment within (?:existing )?user authority/);
+    assert.match(prompt, /foreground\/CLI agent fallback/);
+  }
+  assert.match(continuePrompt, /Reconcile once against current evidence/);
+  assert.match(continuePrompt, /Do not scan unrelated sessions or invent a runtime API/);
+  assert.match(continuePrompt, /A wait timeout does not release ownership/);
+  assert.match(continuePrompt, /cancellation request alone does not prove that all writes stopped/);
+  assert.match(continuePrompt, /If no assignments are known, say so/);
+  assert.match(work, /one named writer, either the root or a delegated worker, never both concurrently/);
+  assert.match(work, /no prior assignment needs reconciliation/);
+  assert.match(prompts["gpt-delegate-implement.md"], /parallel agents only for disjoint owned paths/);
+  // Contract checks only: no real run, writer arbitration, or behavioral trial is exercised.
+});
+
 test("output and authority requirements remain semantic and explicit", () => {
   assert.match(plan, /Default to Standard when uncertain/);
   assert.match(plan, /generic Markdown/);

@@ -5,6 +5,7 @@
 ### Changed
 
 - Carry explicit phase, scope, restrictions, and pending decisions through planning, work, delegation, and resumption; design answers and continuation do not implicitly authorize implementation.
+- Reconcile known runs, pending decisions, and exact writer/path ownership before continuation or parent edits; preserve live assignments, use supported notification-driven reattachment, and stop on uncertain release rather than duplicate work.
 
 ## 0.2.1 - 2026-08-08
 
