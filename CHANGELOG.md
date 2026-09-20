@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.2.2] - 2026-09-20
+
 ### Changed
 
 - Validate workflow behavioral tools against Pi 0.86.1.
