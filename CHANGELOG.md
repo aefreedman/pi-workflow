@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin TypeScript 7.0.2; align direct Node types with the runtime floor; use pinned local tsx 4.23.15 for eval scripts instead of runtime package fetching; require Node >=22.19.0 for the Pi runtime.
+
 - Align development and deterministic validation with Pi 0.99.1.
 
 ## [0.2.3] - 2026-09-21
