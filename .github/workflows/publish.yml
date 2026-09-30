@@ -1,6 +1,8 @@
 name: Publish package
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -13,22 +15,32 @@ permissions:
   id-token: write
 
 concurrency:
-  group: npm-release-${{ github.repository }}-${{ inputs.tag }}
+  group: npm-release-${{ github.repository }}-${{ github.event.release.tag_name || inputs.tag }}
   cancel-in-progress: false
 
 jobs:
   publish:
+    if: github.event_name == 'workflow_dispatch' || !github.event.release.prerelease
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: npm
     env:
-      RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
+      - name: Require a stable release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "A stable v<version> release tag is required" >&2
+            exit 1
+          fi
+
       - name: Check out release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-          ref: ${{ env.RELEASE_TAG }}
+          ref: refs/tags/${{ env.RELEASE_TAG }}
           persist-credentials: false
 
       - name: Set up Node.js
@@ -50,11 +62,11 @@ jobs:
           expected_tag="v${package_version}"
           expected_git_head="$(git rev-parse HEAD)"
 
-          if [[ "${RELEASE_TAG}" != "${expected_tag}" ]]; then
+          if [[ "${package_version}" == *-* || "${RELEASE_TAG}" != "${expected_tag}" ]]; then
             echo "Expected tag ${expected_tag}, got ${RELEASE_TAG}" >&2
             exit 1
           fi
-          if [[ "$(git rev-list -n 1 "${RELEASE_TAG}")" != "${expected_git_head}" ]]; then
+          if [[ "$(git rev-parse --verify "refs/tags/${RELEASE_TAG}^{commit}")" != "${expected_git_head}" ]]; then
             echo "Release tag does not resolve to the checked-out commit" >&2
             exit 1
           fi
@@ -86,7 +98,7 @@ jobs:
             exit 0
           fi
           rm -f "${metadata_file}"
-          if ! grep -q "E404" "${error_file}"; then
+          if ! grep -Eq '^npm error code E404\r?$' "${error_file}"; then
             cat "${error_file}" >&2
             rm -f "${error_file}"
             exit 1
@@ -138,10 +150,23 @@ jobs:
           package_name="$(node --print "require('./package.json').name")"
           package_version="$(node --print "require('./package.json').version")"
           expected_git_head="$(git rev-parse HEAD)"
+          metadata_file="$(mktemp)"
+          error_file="$(mktemp)"
+          trap 'rm -f "${metadata_file}" "${error_file}"' EXIT
           for attempt in {1..10}; do
-            published_head="$(npm view "${package_name}@${package_version}" gitHead 2>/dev/null || true)"
-            if [[ "${published_head}" == "${expected_git_head}" ]]; then
+            if npm view "${package_name}@${package_version}" version gitHead --json >"${metadata_file}" 2>"${error_file}"; then
+              node - "${metadata_file}" "${package_version}" "${expected_git_head}" <<'NODE'
+          const [file, version, head] = process.argv.slice(2);
+          const metadata = JSON.parse(require('node:fs').readFileSync(file, 'utf8'));
+          if (!metadata || Array.isArray(metadata) || metadata.version !== version || metadata.gitHead !== head) {
+            throw new Error('Published version/gitHead does not match the release source');
+          }
+          NODE
               exit 0
+            fi
+            if ! grep -Eq '^npm error code E404\r?$' "${error_file}"; then
+              cat "${error_file}" >&2
+              exit 1
             fi
             sleep 3
           done

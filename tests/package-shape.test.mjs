@@ -25,7 +25,7 @@ test("trusted publishing is tag-bound, resumable, and token-free", () => {
   assert.match(workflow, /workflow_dispatch:\s*\n\s*inputs:\s*\n\s*tag:/);
   assert.match(workflow, /actions\/checkout@[0-9a-f]{40}/);
   assert.match(workflow, /actions\/setup-node@[0-9a-f]{40}/);
-  assert.match(workflow, /ref: \$\{\{ env\.RELEASE_TAG \}\}/);
+  assert.match(workflow, /ref: refs\/tags\/\$\{\{ env\.RELEASE_TAG \}\}/);
   assert.match(workflow, /environment: npm/);
   assert.match(workflow, /registry-url: https:\/\/registry\.npmjs\.org/);
   assert.match(workflow, /id-token: write/);

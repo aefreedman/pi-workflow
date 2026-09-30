@@ -10,6 +10,7 @@
 - Pin TypeScript 7.0.2, Node types 22.20.4, and local tsx 4.23.15 for eval scripts instead of runtime package fetching.
 - Document external Codecks/Plastic tooling and named Terra/Sol agent prerequisites for conditional special workflows; retain the prompt-only package contract.
 - Verify finalized release notes and the complete prompt-only pack inventory before trusted publication.
+- Publish stable GitHub releases automatically through trusted npm publishing, retaining immutable-tag manual recovery.
 
 ## [0.2.3] - 2026-09-21
 
