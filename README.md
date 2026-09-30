@@ -8,6 +8,17 @@ Canonical prompt-owned Pi planning, implementation, review, and changelog workfl
 pi install npm:@aefree/pi-workflow
 ```
 
+## Requirements
+
+Use the latest stable Pi release (currently validated with Pi 0.99.1) and Node.js >=22.19.0. This is a prompt-only package: it installs no agents, tools, credentials, or external integrations.
+
+The core workflows report missing callable capabilities as gaps rather than supplying them. Special workflows are conditional:
+
+- `/closeout-card` requires separately installed Codecks and Plastic SCM tools, authorized Codecks access, and a configured Plastic workspace. Its optional `using-codecks` and `using-plastic` skills are not included here. Review-only use still requires Codecks tooling; merging additionally requires Plastic tooling and owning-tool safety checks.
+- `/gpt-delegate-implement` requires a callable delegation runtime with Terra implementation agents and Sol review agents already configured. Those named agents are not packaged, and the prompt provides no substitute agent or CLI fallback.
+
+Do not invoke a special workflow expecting this package to provision its prerequisites or authorize unrelated external actions.
+
 ## Commands
 
 | Command | Purpose |

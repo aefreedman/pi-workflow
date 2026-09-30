@@ -32,6 +32,12 @@ test("trusted publishing is tag-bound, resumable, and token-free", () => {
   assert.match(workflow, /npm install --global npm@11\.6\.2/);
   assert.match(workflow, /publish_required=false/);
   assert.match(workflow, /npm publish/);
+  assert.match(workflow, /Missing finalized changelog/);
+  assert.match(workflow, /Empty release notes/);
+  assert.match(workflow, /npm pack --dry-run --json/);
+  assert.match(workflow, /assert\.deepEqual\(pack\.files/);
+  assert.ok(workflow.indexOf('Inspect prompt-only package') < workflow.indexOf('- name: Publish'));
+  assert.ok(workflow.indexOf('Missing finalized changelog') < workflow.indexOf('metadata_file='));
   assert.match(workflow, /expected_git_head="\$\(git rev-parse HEAD\)"/);
   assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN|NPM_TOKEN|--otp|_authToken/i);
 });

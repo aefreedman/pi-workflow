@@ -59,6 +59,19 @@ jobs:
             exit 1
           fi
 
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
+          const notes = readFileSync('CHANGELOG.md', 'utf8');
+          const heading = `## [${version}] - `;
+          const lines = notes.split(/\r?\n/);
+          const section = lines.findIndex(line => line.startsWith(heading));
+          if (section < 0) throw new Error(`Missing finalized changelog for ${version}`);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(lines[section].slice(heading.length))) throw new Error('Invalid release date');
+          const end = lines.findIndex((line, index) => index > section && line.startsWith('## '));
+          if (!lines.slice(section + 1, end < 0 ? undefined : end).some(line => line.startsWith('- '))) throw new Error('Empty release notes');
+          NODE
+
           metadata_file="$(mktemp)"
           error_file="$(mktemp)"
           if npm view "${package_name}@${package_version}" version gitHead --json >"${metadata_file}" 2>"${error_file}"; then
@@ -89,6 +102,30 @@ jobs:
 
       - name: Audit runtime dependencies
         run: npm audit --omit=dev
+
+      - name: Inspect prompt-only package
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json > "${RUNNER_TEMP}/pack.json"
+          node --input-type=module - "${RUNNER_TEMP}/pack.json" <<'NODE'
+          import assert from 'node:assert/strict';
+          import { readFileSync, readdirSync } from 'node:fs';
+          const [pack] = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+          const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
+          const expected = ['package.json', 'README.md', 'LICENSE', 'CHANGELOG.md'];
+          for (const directory of ['prompts/core', 'prompts/special']) {
+            for (const name of readdirSync(directory)) {
+              assert.ok(name.endsWith('.md'), `Unexpected prompt resource: ${name}`);
+              expected.push(`${directory}/${name}`);
+            }
+          }
+          assert.equal(pack.name, manifest.name);
+          assert.equal(pack.version, manifest.version);
+          assert.deepEqual(pack.files.map(file => file.path).sort(), expected.sort());
+          assert.ok(pack.files.every(file => file.size > 0), 'Empty packed resource');
+          console.log(JSON.stringify(pack, null, 2));
+          NODE
 
       - name: Publish
         if: steps.identity.outputs.publish_required == 'true'

@@ -1,6 +1,6 @@
 {
   "name": "@aefree/pi-workflow",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Canonical prompt-owned Pi planning, implementation, review, and changelog workflows.",
   "type": "module",
   "sideEffects": false,

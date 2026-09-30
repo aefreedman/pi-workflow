@@ -2,9 +2,14 @@
 
 ## Unreleased
 
-- Pin TypeScript 7.0.2; align direct Node types with the runtime floor; use pinned local tsx 4.23.15 for eval scripts instead of runtime package fetching; require Node >=22.19.0 for the Pi runtime.
+## [0.3.0] - 2026-09-29
 
-- Align development and deterministic validation with Pi 0.99.1.
+### Changed
+
+- Require Node >=22.19.0 and align development and deterministic validation with Pi 0.99.1.
+- Pin TypeScript 7.0.2, Node types 22.20.4, and local tsx 4.23.15 for eval scripts instead of runtime package fetching.
+- Document external Codecks/Plastic tooling and named Terra/Sol agent prerequisites for conditional special workflows; retain the prompt-only package contract.
+- Verify finalized release notes and the complete prompt-only pack inventory before trusted publication.
 
 ## [0.2.3] - 2026-09-21
 
