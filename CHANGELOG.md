@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Stop treating delayed npm registry visibility as a trusted-publication failure; retain immutable tag and pre-publish identity checks.
+
 ## [0.3.0] - 2026-09-29
 
 ### Changed

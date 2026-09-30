@@ -18,15 +18,16 @@ test('published releases and manual recovery share the protected immutable tag r
   assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN|secrets\./);
 });
 
-test('tag source, manifest identity and fail-closed registry checks gate publication', () => {
+test('tag source and fail-closed preflight gate publication without a post-publish visibility gate', () => {
   assert.match(workflow, /\^v\[0-9\]\+\\\.\[0-9\]\+\\\.\[0-9\]\+\$/);
   assert.match(workflow, /package_version\}" == \*-\*/);
   assert.match(workflow, /git rev-parse --verify "refs\/tags\/\$\{RELEASE_TAG\}\^\{commit\}"/);
   assert.match(workflow, /expected_git_head="\$\(git rev-parse HEAD\)"/);
   assert.match(workflow, /observed_version.*!=.*package_version/);
   assert.match(workflow, /observed_git_head.*!=.*expected_git_head/);
-  assert.equal(workflow.split("grep -Eq '^npm error code E404\\r?$'").length - 1, 2);
-  assert.doesNotMatch(workflow, /npm view.*\|\| true/);
+  assert.equal(workflow.split("grep -Eq '^npm error code E404\\r?$'").length - 1, 1);
+  assert.doesNotMatch(workflow, /Verify published commit|npm view.*\|\| true/);
+  assert.match(workflow, /run: npm publish/);
   assert.match(workflow, /npm test/);
   assert.match(workflow, /npm pack --dry-run --json/);
 });
